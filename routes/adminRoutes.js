@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+const Business = require("../models/Business");
 
 // View All Offers
 router.get("/", (req, res) => {
@@ -68,3 +69,29 @@ router.get("/allC", (req, res) => {
 router.get("/allB", (req, res) => {
     Business.find().then((offer) => res.json(offer));
 });
+
+// Check For Username
+router.post("/checkUsername", (req, res) => {
+    Business.findOne({username: req.body.username}, (err, data) => {
+        if (data === null) {
+            console.log(req.body.username)
+            res.send({ username: false})
+        }
+        else {
+            res.send({ username: true})
+        }
+    })
+})
+
+// Check If Account Exists With Email
+router.post("/checkEmail", (req, res) => {
+    Business.findOne({email: req.body.email}, (err, data) => {
+        if (data === null) {
+            console.log(req.body.email)
+            res.send({ email: false})
+        }
+        else {
+            res.send({ email: true})
+        }
+    })
+})

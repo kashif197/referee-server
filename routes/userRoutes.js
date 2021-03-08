@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const passport = require('passport')
 
 // Import Model
 const Customer = require("../models/Customer");
@@ -10,6 +11,17 @@ const Business = require("../models/Business");
 const { logInValidation } = require('./validation');
 const { signUpCustomerValidation } = require('./validation');
 const { signUpBusinessValidation } = require('./validation');
+
+// Auth With Google
+router.get('/google', passport.authenticate('google', {
+    scope: ['profile']
+}))
+
+//Callback Route For Google
+router.get('/google/redirect', (req, res) => {
+    console.log('here')
+})
+
 
 // @route POST api/customers
 // @desc Login Customer

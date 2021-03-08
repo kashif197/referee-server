@@ -2,6 +2,7 @@ const express = require('express')
 const path = require('path')
 const mongoose = require('mongoose')
 const cors = require('cors')
+const PassportSetup = require('./config/passport-setup')
 
 // Adding Routes
 const user = require('./routes/userRoutes')
