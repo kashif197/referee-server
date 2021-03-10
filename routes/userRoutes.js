@@ -73,8 +73,12 @@ router.post("/login", (req, res) => {
                                     return res.json({
                                         id: data.id,
                                         status: 2,
-                                        name: data.title,
+                                        title: data.title,
                                         message: "Logged In",
+                                        email: data.email,
+                                        username: data.username,
+                                        contact: data.contact,
+                                        designation: data.designation,
                                         token
                                     });
                                 });

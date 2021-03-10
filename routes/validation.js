@@ -62,7 +62,7 @@ const editOfferValidation = (data) => {
     campaign_name: Joi.string().min(6).required(),
     headline: Joi.string().min(6).required(),
     commission_value: Joi.number().min(1).max(50),
-    description: Joi.string().min(20).max(160),
+    description: Joi.string().min(10).max(160),
   });
   return schema.validate(data);
 };

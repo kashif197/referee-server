@@ -40,7 +40,10 @@ router.post("/addOffer", verifyToken, (req, res) => {
         } else {
           // validation
           const { error } = addOfferValidation(req.body);
-          if (error) return res.status(400).send(error.details[0].message);
+          if (error) {
+            console.log(error)
+            return res.status(400).send(error.details[0].message)
+          };
           // adding offer
           const newOffer = new Offer({
             business_id: req.body.business_id,
@@ -69,7 +72,9 @@ router.patch("/edit/:id", verifyToken, (req, res) => {
     } else {
       // validation
       const { error } = editOfferValidation(req.body);
-      if (error) return res.status(400).send(error.details[0].message);
+      if (error) {
+        console.log(error)
+        return res.status(400).send(error.details[0].message)};
       // editing offer
       Offer.updateOne(
         { _id: req.params.id },

@@ -72,26 +72,32 @@ router.get("/allB", (req, res) => {
 
 // Check For Username
 router.post("/checkUsername", (req, res) => {
-    Business.findOne({username: req.body.username}, (err, data) => {
+    Business.findOne({ username: req.body.username }, (err, data) => {
         if (data === null) {
             console.log(req.body.username)
-            res.send({ username: false})
+            res.send({ username: false })
         }
         else {
-            res.send({ username: true})
+            res.send({ username: true })
         }
     })
 })
 
 // Check If Account Exists With Email
 router.post("/checkEmail", (req, res) => {
-    Business.findOne({email: req.body.email}, (err, data) => {
-        if (data === null) {
-            console.log(req.body.email)
-            res.send({ email: false})
-        }
-        else {
-            res.send({ email: true})
-        }
-    })
+
+        Business.findOne({ email: req.body.email }, (err, data) => {
+            jwt.sign({ data }, 'secretkey', { expiresIn: '1h' }, (err, token) => {
+
+            if (data === null) {
+                console.log(req.body.email)
+                res.send({ email: false })
+            }
+            else {
+                res.send({ data, token })
+            }
+        });
+
+        })
+
 })
