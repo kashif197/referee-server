@@ -51,7 +51,7 @@ const addOfferValidation = (data) => {
     commission_based: Joi.boolean().required(),
     commission_value: Joi.number(),
     target_transaction: Joi.number().min(5).required(),
-    description: Joi.string().min(20).max(50),
+    description: Joi.string().min(10).max(50),
   });
   return schema.validate(data);
 };
