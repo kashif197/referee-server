@@ -94,7 +94,7 @@ router.patch("/edit/:id", verifyToken, (req, res) => {
 });
 
 // @route DELETE api/customers
-// @desc Delete Offer
+// @desc Delete Offer Route
 // @access public
 router.delete('/deleteOffer/:id', verifyToken, (req, res) => {
   jwt.verify(req.token, 'secretkey', (err, authData) => {
