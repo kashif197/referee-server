@@ -242,7 +242,7 @@ router.post("/reset-password", (req, res) => {
                                 <h5>Your password reset code is: ${token}.</h5>
                                 `,
           });
-          res.json({ message: "check your email" });
+          res.json({ status: true, message: "check your email" });
         });
       });
     } else {
@@ -264,7 +264,7 @@ router.post("/reset-password", (req, res) => {
                                 <h5>Your password reset code is: ${token}.</h5>
                                 `,
           });
-          res.json({ message: "check your email" });
+          res.json({ status:true, message: "check your email" });
         });
       });
     }
@@ -309,7 +309,7 @@ router.post("/new-password", async (req, res) => {
         user.resetToken = undefined;
         user.expireToken = undefined;
         user.save().then((saveduser) => {
-          res.json({ message: "password updated success" });
+          res.json({ status: true, message: "password updated success" });
         });
       });
     } else {
@@ -320,7 +320,7 @@ router.post("/new-password", async (req, res) => {
             user.resetToken = undefined;
             user.expireToken = undefined;
             user.save().then((saveduser) => {
-              res.json({ message: "password updated success" });
+              res.json({ status: true,message: "password updated success" });
             });
           });
         }
