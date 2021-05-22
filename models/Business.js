@@ -26,7 +26,9 @@ const BusinessSchema = new Schema({
     designation: {
         type: String,
         required: true
-    }
+    },
+    resetToken:String,
+    expireToken:Date,
 })
 
 module.exports = Business = mongoose.model('business', BusinessSchema)

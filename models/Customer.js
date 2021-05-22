@@ -36,7 +36,9 @@ const CustomerSchema = new Schema({
         type: Date,
         required: true,
         default: Date.now
-    }
+    },
+    resetToken:String,
+    expireToken:Date,
 })
 
 module.exports = Customer = mongoose.model('customer', CustomerSchema)

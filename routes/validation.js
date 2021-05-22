@@ -8,7 +8,7 @@ const signUpBusinessValidation = (data) => {
       customer: Joi.boolean().required(),
       title: Joi.string().required(),
       email: Joi.string().email({tlds:{allow:false}}).required(),
-      password: Joi.string().min(6).max(24).required(),
+      password: Joi.required(),
       username: Joi.string().required(),
       contact: Joi.number().min(10).required(),
       designation: Joi.string()
