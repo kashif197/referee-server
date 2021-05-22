@@ -271,8 +271,7 @@ router.post("/reset-password", (req, res) => {
   });
 });
 
-router.post("/new-password", (req, res) => {
-  const newPassword = req.body.password;
+router.post("/check-token", (req, res) => {
   const sentToken = req.body.token;
   Customer.findOne({ email: req.body.email }, (err, data) => {
     if (data) {
@@ -280,18 +279,8 @@ router.post("/new-password", (req, res) => {
         resetToken: sentToken,
         expireToken: { $gt: Date.now() },
       })
-        .then((user) => {
-          if (!user) {
-            return res.status(422).json({ error: "Try again session expired" });
-          }
-          bcrypt.hash(newPassword, 12).then((hashedpassword) => {
-            user.password = hashedpassword;
-            user.resetToken = undefined;
-            user.expireToken = undefined;
-            user.save().then((saveduser) => {
-              res.json({ message: "password updated success" });
-            });
-          });
+        .then(() => {
+          res.json({ status: true, message: "Token is verified!" });
         })
         .catch((err) => {
           console.log(err);
@@ -301,10 +290,31 @@ router.post("/new-password", (req, res) => {
         resetToken: sentToken,
         expireToken: { $gt: Date.now() },
       })
-        .then((user) => {
-          if (!user) {
-            return res.status(422).json({ error: "Try again session expired" });
-          }
+        .then(() => {
+          res.json({ status: true, message: "Token is verified!" });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+  });
+});
+
+router.post("/new-password", async (req, res) => {
+  const newPassword = req.body.password;
+  Customer.findOne({ email: req.body.email }, (err, user) => {
+    if (user) {
+      bcrypt.hash(newPassword, 12).then((hashedpassword) => {
+        user.password = hashedpassword;
+        user.resetToken = undefined;
+        user.expireToken = undefined;
+        user.save().then((saveduser) => {
+          res.json({ message: "password updated success" });
+        });
+      });
+    } else {
+      Business.findOne({ email: req.body.email }, (err, user) => {
+        if (user) {
           bcrypt.hash(newPassword, 12).then((hashedpassword) => {
             user.password = hashedpassword;
             user.resetToken = undefined;
@@ -313,10 +323,8 @@ router.post("/new-password", (req, res) => {
               res.json({ message: "password updated success" });
             });
           });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+        }
+      });
     }
   });
 });
