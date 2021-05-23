@@ -3,12 +3,14 @@ const path = require('path')
 const mongoose = require('mongoose')
 const cors = require('cors')
 const PassportSetup = require('./config/passport-setup')
+require("dotenv").config();
 
 // Adding Routes
 const user = require('./routes/userRoutes')
 const offer = require('./routes/offerRoutes')
 const admin = require('./routes/adminRoutes')
 const qrcode = require('./routes/qrcRoutes')
+const watsonRoutes = require('./routes/watson')
 
 const app = express()
 
@@ -27,10 +29,11 @@ mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true, useCreat
     .catch((err) => console.log(err))
 
 // Using Routes
-app.use('/user', user)
-app.use('/offer', offer)
-app.use('/admin', admin)
-app.use('/qrcode', qrcode)
+app.use('/user', user);
+app.use('/offer', offer);
+app.use('/admin', admin);
+app.use('/qrcode', qrcode);
+app.use('/watson', watsonRoutes);
 
 const PORT = process.env.PORT || 5000
 
