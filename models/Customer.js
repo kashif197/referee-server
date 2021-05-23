@@ -37,6 +37,11 @@ const CustomerSchema = new Schema({
         required: true,
         default: Date.now
     },
+    referral_code: {
+        type: String,
+        required: false,
+        default: ""
+    },
     resetToken:String,
     expireToken:Date,
 })

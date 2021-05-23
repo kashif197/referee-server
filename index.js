@@ -8,6 +8,7 @@ const PassportSetup = require('./config/passport-setup')
 const user = require('./routes/userRoutes')
 const offer = require('./routes/offerRoutes')
 const admin = require('./routes/adminRoutes')
+const qrcode = require('./routes/qrcRoutes')
 
 const app = express()
 
@@ -29,6 +30,7 @@ mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true, useCreat
 app.use('/user', user)
 app.use('/offer', offer)
 app.use('/admin', admin)
+app.use('/qrcode', qrcode)
 
 const PORT = process.env.PORT || 5000
 

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
-
+var QRCode = require("qrcode");
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
@@ -17,6 +17,9 @@ const Business = require("../models/Business");
 const { logInValidation } = require("./validation");
 const { signUpCustomerValidation } = require("./validation");
 const { signUpBusinessValidation } = require("./validation");
+const { url } = require("inspector");
+const { text } = require("express");
+const { type } = require("os");
 
 // Auth With Google
 router.get(
@@ -39,6 +42,16 @@ const transporter = nodemailer.createTransport(
     },
   })
 );
+
+// Generate QR Code
+const generateQR = async text => {
+  try {
+    console.log(await QRCode.toString(text, {type:"utf8"}))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 
 // @route POST api/customers
 // @desc Login Customer
@@ -67,7 +80,7 @@ router.post("/login", (req, res) => {
           // .then((data) => {
           // validation of credentials
           const { error } = logInValidation(req.body);
-          if (data !== null) {
+          if (matchedPassword == true) {
             jwt.sign(
               { data },
               "secretkey",
@@ -77,6 +90,11 @@ router.post("/login", (req, res) => {
                   id: data.id,
                   status: 1,
                   first_name: data.first_name,
+                  last_name: data.last_name,
+                  username: data.username,
+                  email: data.email,
+                  contact: data.contact,
+                  referral: data.referral_code,
                   message: "Logged In",
                   token,
                 });
@@ -91,6 +109,7 @@ router.post("/login", (req, res) => {
         });
     } else {
       Business.findOne({ email: req.body.email }, (err, data) => {
+        const userInfo = data
         if (data) {
           bcrypt
             .compare(req.body.password, data.password)
@@ -100,21 +119,21 @@ router.post("/login", (req, res) => {
             //     }
             // })
             .then((data) => {
-              if (data !== null) {
+              if (data == true) {
                 jwt.sign(
                   { data },
                   "secretkey",
                   { expiresIn: "1h" },
                   (err, token) => {
                     return res.json({
-                      id: data.id,
+                      id: userInfo.id,
                       status: 2,
-                      title: data.title,
+                      title: userInfo.title,
                       message: "Logged In",
-                      email: data.email,
-                      username: data.username,
-                      contact: data.contact,
-                      designation: data.designation,
+                      email: userInfo.email,
+                      username: userInfo.username,
+                      contact: userInfo.contact,
+                      designation: userInfo.designation,
                       token,
                     });
                   }
@@ -193,7 +212,8 @@ router.post("/signup", (req, res) => {
       } else {
         // validation of credentials
         const { error } = signUpBusinessValidation(req.body);
-        if (error) return res.status(400).send(error.details[0].message);
+        if (error) return res.status(400).send(error.details[0].message)
+        qrc = generateQR(req.body.username).toString()
         bcrypt
           .hash(req.body.password, 12)
           // if valid then create business
@@ -205,6 +225,8 @@ router.post("/signup", (req, res) => {
               username: req.body.username,
               contact: req.body.contact,
               designation: req.body.designation,
+              qr_code: qrc
+              
             });
             res.json({ status: true, message: "Business has been created" });
             newBusiness.save();
@@ -328,5 +350,55 @@ router.post("/new-password", async (req, res) => {
     }
   });
 });
+
+
+// Generate QR-Code
+router.post("/generate-qrcode", (req, res) => {
+  Business.findOne({email:req.body.email}, (err, user) =>{
+    console.log(user.qr_code)
+  })
+
+  // Business.findOne({email:req.body.email}, (err, user) =>{
+  //    user.qr_code = QRCode.toDataURL(user.id)
+// const generateQR = async text => {
+//   try {
+//     // console.log(await (await QRCode.toString(text)))
+//     console.log(await QRCode.toDataURL(text))
+//   } catch (err) {
+//     console.error(err)
+//   }
+// }
+
+
+
+const scanQR = async text => {
+  try {
+    console.log(await QRCode.toString(text, {type:"utf8"}))
+  } catch (err) {
+    console.error(err)
+  }
+}
+
+generateQR("http://www.yahoo.com")
+// scanQR("http://www.yahoo.com")
+  
+})
+
+  ///// FOR GENERATING QR IMAGE
+  // QRCode.toDataURL(text)
+  // .then((url)=>{
+  //   setImageUrl(url);
+  // })
+  
+
+//   QRCode.toDataURL("I am a pony!")
+//   .then((url) => {
+//     console.log(url);
+//   })
+//   .catch((err) => {
+//     console.error(err);
+//   });
+// });
+
 
 module.exports = router;

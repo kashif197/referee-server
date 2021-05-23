@@ -1,3 +1,4 @@
+const { string } = require('joi')
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
@@ -26,6 +27,11 @@ const BusinessSchema = new Schema({
     designation: {
         type: String,
         required: true
+    },
+    qr_code: {
+        type: String,
+        required: false,
+        default: ""
     },
     resetToken:String,
     expireToken:Date,
