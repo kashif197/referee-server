@@ -62,19 +62,19 @@ router.post("/message", async (req, res) => {
           case 'text':
             // It's a text response, so we just display it.
             // console.log(message.result.output.generic[0].text);
-            res.json(message.result.output.generic[0].text)
+            res.json(message.result.output.generic[0])
             break;
           case 'option':
             // It's an option response, so we'll need to show the user
             // a list of choices.
             // console.log(message.result.output.generic[0].title);
-            res.json(message.result.output.generic[0].title)
+            res.json(message.result.output.generic[0])
 
             const options = message.result.output.generic[0].options;
             // List the options by label.
             for (let i = 0; i < options.length; i++) {
               // console.log((i+1).toString() + '. ' + options[i].label);
-              res.json((i+1).toString() + '. ' + options[i].label)
+              res.json((i+1).toString() + '. ' + options[i])
             }
             break;
         }
