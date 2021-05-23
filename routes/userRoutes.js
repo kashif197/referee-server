@@ -44,9 +44,10 @@ const transporter = nodemailer.createTransport(
 );
 
 // Generate QR Code
-const generateQR = async text => {
+const generateQR = async (text, filename) => {
   try {
-    console.log(await QRCode.toString(text, {type:"utf8"}))
+    await QRCode.toString(text, {type:"utf8"})
+    await QRCode.toFile("images/" + filename + ".png", text, {width:500})
   } catch (err) {
     console.error(err)
   }
@@ -213,7 +214,7 @@ router.post("/signup", (req, res) => {
         // validation of credentials
         const { error } = signUpBusinessValidation(req.body);
         if (error) return res.status(400).send(error.details[0].message)
-        qrc = generateQR(req.body.username).toString()
+        qrc = generateQR(req.body.username, req.body.username).toString()
         bcrypt
           .hash(req.body.password, 12)
           // if valid then create business

@@ -34,6 +34,7 @@ app.use('/offer', offer);
 app.use('/admin', admin);
 app.use('/qrcode', qrcode);
 app.use('/watson', watsonRoutes);
+app.use('/images', express.static('images')); 
 
 const PORT = process.env.PORT || 5000
 
