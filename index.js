@@ -9,7 +9,7 @@ require("dotenv").config();
 const user = require('./routes/userRoutes')
 const offer = require('./routes/offerRoutes')
 const admin = require('./routes/adminRoutes')
-const qrcode = require('./routes/qrcRoutes')
+const offcust = require('./routes/offerCustomerRoutes')
 const watsonRoutes = require('./routes/watson')
 
 const app = express()
@@ -32,7 +32,7 @@ mongoose.connect(db, { useNewUrlParser: true, useUnifiedTopology: true, useCreat
 app.use('/user', user);
 app.use('/offer', offer);
 app.use('/admin', admin);
-app.use('/qrcode', qrcode);
+app.use('/offcust', offcust)
 app.use('/watson', watsonRoutes);
 app.use('/images', express.static('images')); 
 

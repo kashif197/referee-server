@@ -46,13 +46,12 @@ const transporter = nodemailer.createTransport(
 // Generate QR Code
 const generateQR = async (text, filename) => {
   try {
-    await QRCode.toString(text, {type:"utf8"})
-    await QRCode.toFile("images/" + filename + ".png", text, {width:500})
+    await QRCode.toString(text, { type: "utf8" });
+    await QRCode.toFile("images/" + filename + ".png", text, { width: 500 });
   } catch (err) {
-    console.error(err)
+    console.error(err);
   }
-}
-
+};
 
 // @route POST api/customers
 // @desc Login Customer
@@ -110,7 +109,7 @@ router.post("/login", (req, res) => {
         });
     } else {
       Business.findOne({ email: req.body.email }, (err, data) => {
-        const userInfo = data
+        const userInfo = data;
         if (data) {
           bcrypt
             .compare(req.body.password, data.password)
@@ -197,9 +196,11 @@ router.post("/signup", (req, res) => {
               contact: req.body.contact,
               dob: req.body.dob,
             });
-          });
-        res.json({ status: true, message: "Customer has been created" });
-        newCustomer.save();
+            newCustomer.save();  
+            res.json({ status: true, message: "Customer has been created" });
+              
+          })
+          
       }
     }).catch((err) => res.send({ message: "Customer not created" }));
   } else {
@@ -213,8 +214,8 @@ router.post("/signup", (req, res) => {
       } else {
         // validation of credentials
         const { error } = signUpBusinessValidation(req.body);
-        if (error) return res.status(400).send(error.details[0].message)
-        qrc = generateQR(req.body.username, req.body.username).toString()
+        if (error) return res.status(400).send(error.details[0].message);
+        qrc = generateQR(req.body.username, req.body.username).toString();
         bcrypt
           .hash(req.body.password, 12)
           // if valid then create business
@@ -226,8 +227,7 @@ router.post("/signup", (req, res) => {
               username: req.body.username,
               contact: req.body.contact,
               designation: req.body.designation,
-              qr_code: qrc
-              
+              qr_code: qrc,
             });
             res.json({ status: true, message: "Business has been created" });
             newBusiness.save();
@@ -352,45 +352,40 @@ router.post("/new-password", async (req, res) => {
   });
 });
 
-
 // Generate QR-Code
 router.post("/generate-qrcode", (req, res) => {
-  Business.findOne({email:req.body.email}, (err, user) =>{
-    console.log(user.qr_code)
-  })
+  Business.findOne({ email: req.body.email }, (err, user) => {
+    console.log(user.qr_code);
+  });
 
   // Business.findOne({email:req.body.email}, (err, user) =>{
   //    user.qr_code = QRCode.toDataURL(user.id)
-// const generateQR = async text => {
-//   try {
-//     // console.log(await (await QRCode.toString(text)))
-//     console.log(await QRCode.toDataURL(text))
-//   } catch (err) {
-//     console.error(err)
-//   }
-// }
+  // const generateQR = async text => {
+  //   try {
+  //     // console.log(await (await QRCode.toString(text)))
+  //     console.log(await QRCode.toDataURL(text))
+  //   } catch (err) {
+  //     console.error(err)
+  //   }
+  // }
 
+  const scanQR = async (text) => {
+    try {
+      console.log(await QRCode.toString(text, { type: "utf8" }));
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
+  generateQR("http://www.yahoo.com");
+  // scanQR("http://www.yahoo.com")
+});
 
-const scanQR = async text => {
-  try {
-    console.log(await QRCode.toString(text, {type:"utf8"}))
-  } catch (err) {
-    console.error(err)
-  }
-}
-
-generateQR("http://www.yahoo.com")
-// scanQR("http://www.yahoo.com")
-  
-})
-
-  ///// FOR GENERATING QR IMAGE
-  // QRCode.toDataURL(text)
-  // .then((url)=>{
-  //   setImageUrl(url);
-  // })
-  
+///// FOR GENERATING QR IMAGE
+// QRCode.toDataURL(text)
+// .then((url)=>{
+//   setImageUrl(url);
+// })
 
 //   QRCode.toDataURL("I am a pony!")
 //   .then((url) => {
@@ -400,6 +395,5 @@ generateQR("http://www.yahoo.com")
 //     console.error(err);
 //   });
 // });
-
 
 module.exports = router;
