@@ -21,6 +21,12 @@ router.delete('/deleteOffCust/:id', (req, res) => {
     .catch(err => res.status(404).json({ err }))
  })
 
+ router.delete('/deleteAllOffCust', (req, res) => {
+  OfferCustomerMap.remove({})
+  .then(() => res.json({ success: true }))
+  .catch((err) => res.status(404).json({ err }));
+})
+
 router.post("/availOffer", verifyToken, async (req, res) => {
   jwt.verify(req.token, "secretkey", (err, authData) => {
     if (err) {
