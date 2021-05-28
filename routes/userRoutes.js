@@ -180,6 +180,7 @@ router.post("/signup", (req, res) => {
         });
       } else {
         // validation of credentials
+        const refcode = Math.floor(1000 + Math.random() * 9000).toString();
         const { error } = signUpCustomerValidation(req.body);
         if (error) return res.status(400).send(error.details[0].message);
         bcrypt
@@ -194,6 +195,7 @@ router.post("/signup", (req, res) => {
               password: passwordHash,
               gender: req.body.gender,
               contact: req.body.contact,
+              referral_code: refcode,
               dob: req.body.dob,
             });
             newCustomer.save();  
@@ -357,29 +359,10 @@ router.post("/generate-qrcode", (req, res) => {
   Business.findOne({ email: req.body.email }, (err, user) => {
     console.log(user.qr_code);
   });
+})
 
-  // Business.findOne({email:req.body.email}, (err, user) =>{
-  //    user.qr_code = QRCode.toDataURL(user.id)
-  // const generateQR = async text => {
-  //   try {
-  //     // console.log(await (await QRCode.toString(text)))
-  //     console.log(await QRCode.toDataURL(text))
-  //   } catch (err) {
-  //     console.error(err)
-  //   }
-  // }
 
-  const scanQR = async (text) => {
-    try {
-      console.log(await QRCode.toString(text, { type: "utf8" }));
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
-  generateQR("http://www.yahoo.com");
-  // scanQR("http://www.yahoo.com")
-});
 
 ///// FOR GENERATING QR IMAGE
 // QRCode.toDataURL(text)

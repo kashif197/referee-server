@@ -15,6 +15,12 @@ router.get("/", (req, res) => {
   );
 });
 
+router.delete('/deleteOffCust/:id', (req, res) => {
+    OfferCustomerMap.findById(req.params.id)
+    .then(offer => offer.remove().then(() => res.json({ success: true })))
+    .catch(err => res.status(404).json({ err }))
+ })
+
 router.post("/availOffer", verifyToken, async (req, res) => {
   jwt.verify(req.token, "secretkey", (err, authData) => {
     if (err) {
@@ -30,28 +36,69 @@ router.post("/availOffer", verifyToken, async (req, res) => {
               { username: req.body.username },
               async (err, custData) => {
                 if (custData) {
-                  const offerAvail = await OfferCustomerMap.findOne({offer_campName: offData.campaign_name});
-                  const customerAvail = await OfferCustomerMap.findOne({ customer_id: custData.id });
-                  if (offerAvail && customerAvail) {
+                  const matchedMapper = await OfferCustomerMap.findOne(
+                    {offer_campName: offData.campaign_name, 
+                    customer_id: custData.id});
+                  const unmatchedMapper = await OfferCustomerMap.findOne({$or: [
+                    {offer_campName: offData.campaign_name}, 
+                    {customer_id: {'$ne':custData.id}}
+                ]});
+                  if (matchedMapper) {
+
+                    // if the mapper is present add the counter till it reaches the target transaction
+                    
                     //redeem offer logic
-                    offerAvail.count += 1 // can also be customerAvail
+                    matchedMapper.count += 1 
                     OfferCustomerMap.updateOne(
-                      { _id: offerAvail.id },
+                      { _id: matchedMapper.id },
                       {
                         $set: {
-                          count: offerAvail.count
+                          count: matchedMapper.count
                         },
                       },
                       (err, data) => {
-                        if(offerAvail.count == offerAvail.targetTransaction){
-                        res.send({status: true, count:offerAvail.count,
-                          message: "Mapper already created.\nOffer can be redeemed now."})
-                      } else if(offerAvail.count < offerAvail.targetTransaction){
-                        res.send({status: false, count:offerAvail.count,
-                          message: "Mapper already created.\nOffer cannot be redeemed now."})
+                        if(matchedMapper.count == matchedMapper.targetTransaction){
+                        res.send({status: true, count:matchedMapper.count,
+                          message: "Mapper already created. Offer can be redeemed now."})
+                      } else if(matchedMapper.count < matchedMapper.targetTransaction){
+                        res.send({status: false, count:matchedMapper.count,
+                          message: "Mapper already created. Offer cannot be redeemed now."})
+                      } else{
+                        res.send({status: false, count:-1,
+                          message: "Mapper already created. Offer cannot be availed now."})
                       }
                       });
-                  } else {
+                  } 
+                  else if (unmatchedMapper) {
+
+                    // create a new mapper for an offer to be availed by another customer
+                    
+                    b_id = offData.business_id;
+                    c_id = custData.id;
+                    o_id = offData.id;
+                    o_cn = offData.campaign_name;
+                    targetTrans = offData.target_transaction;
+                    const newOffCust = new OfferCustomerMap({
+                      business_id: b_id,
+                      customer_id: c_id,
+                      offer_id: o_id,
+                      offer_campName: o_cn,
+                      targetTransaction: targetTrans,
+                      count: 0,
+                    });
+                    newOffCust
+                      .save()
+                      .then((newOffCust) => {
+                        res.send({ message: "Mapper Created" });
+                      })
+                      .catch((err) =>
+                        res.send({ message: "Mapper not created", err })
+                      );
+                  }                 
+                  else {
+
+                    // Create a new mapper 
+                    
                     b_id = offData.business_id;
                     c_id = custData.id;
                     o_id = offData.id;
@@ -87,31 +134,15 @@ router.post("/availOffer", verifyToken, async (req, res) => {
     }
   });
 });
-//             // validation
-//             const { error } = addOfferValidation(req.body);
-//             if (error) {
-//               console.log(error)
-//               return res.status(400).send(error.details[0].message)
-//             };
-//             // adding offer
-//             const newOffer = new Offer({
-//               business_id: req.body.business_id,
-//               campaign_name: req.body.campaign_name,
-//               headline: req.body.headline,
-//               live_date: req.body.live_date,
-//               expiry_date: req.body.expiry_date,
-//               commission_based: req.body.commission_based,
-//               commission_value: req.body.commission_value,
-//               target_transaction: req.body.target_transaction,
-//               description: req.body.description,
-//             })
-//             newOffer.save().then((offer) => res.json({ status: true }));
-//           }
-//         });
 
-//       }
-//     })
-//   })
+
+router.get('/getAvailedOffers/:id', async (req, res) => {
+  const customer = await OfferCustomerMap.find({customer_id: req.params.id});
+  res.send({status: true, data: customer, message: "All availed offers of the customer."})
+  // .then(offer => offer.remove().then(() => res.json({ success: true })))
+  // .catch(err => res.status(404).json({ err }))
+})
+
 
 function verifyToken(req, res, next) {
   const bearerHeader = req.headers["authorization"];
