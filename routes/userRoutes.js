@@ -20,6 +20,7 @@ const { signUpBusinessValidation } = require("./validation");
 const { url } = require("inspector");
 const { text } = require("express");
 const { type } = require("os");
+const OfferCustomerMap = require("../models/OfferCustomerMap");
 
 // Auth With Google
 router.get(
@@ -359,6 +360,30 @@ router.post("/generate-qrcode", (req, res) => {
   Business.findOne({ email: req.body.email }, (err, user) => {
     console.log(user.qr_code);
   });
+})
+
+
+// Transaction Process
+router.post("/transaction", async (req, res) => {
+  const customer = await Customer.findOne({referral_code: req.body.referral_code});
+  const business = await Business.findOne({username: req.body.username});
+  // console.log("customer: ", customer);
+  // console.log("business: ", business);
+  const customer_map = await OfferCustomerMap.findOne({customer_id: customer.id, business_id: business._id})
+  // console.log(customer_map);
+  customer_map.count += 1;
+  OfferCustomerMap.updateOne(
+    {customer_id: customer.id, business_id: business._id},
+    {
+      $set: {
+        count: customer_map.count
+      },
+    })
+    .then((result)=>{
+      res.send({message:"Transaction successful.", status: true, data:result.count})
+    })
+    .catch(err=>{res.send(err)})
+  
 })
 
 

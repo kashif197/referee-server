@@ -18,6 +18,10 @@ const OfferCustomerMapSchema = new Schema({
     offer_campName:{
         type: String,
     },
+    business_username: {
+        type: String,
+        default: '',
+    },
     live_date: {
         type: Date,
         default: Date.now
