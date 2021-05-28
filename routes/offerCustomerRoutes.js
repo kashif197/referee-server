@@ -58,14 +58,14 @@ router.post("/availOffer", verifyToken, async (req, res) => {
                       },
                       (err, data) => {
                         if(matchedMapper.count == matchedMapper.targetTransaction){
-                        res.send({status: true, count:matchedMapper.count,
-                          message: "Mapper already created. Offer can be redeemed now."})
+                        res.send({redeemStatus: true, status: true, count:matchedMapper.count,
+                          message: "Offer can be redeemed now."})
                       } else if(matchedMapper.count < matchedMapper.targetTransaction){
-                        res.send({status: false, count:matchedMapper.count,
-                          message: "Mapper already created. Offer cannot be redeemed now."})
+                        res.send({redeemStatus: false, status: true,count:matchedMapper.count,
+                          message: "You have already availed this offer."})
                       } else{
-                        res.send({status: false, count:-1,
-                          message: "Mapper already created. Offer cannot be availed now."})
+                        res.send({redeemStatus: false, status: true,count:-1,
+                          message: "Offer already redeemed."})
                       }
                       });
                   } 
@@ -89,10 +89,10 @@ router.post("/availOffer", verifyToken, async (req, res) => {
                     newOffCust
                       .save()
                       .then((newOffCust) => {
-                        res.send({ message: "Mapper Created" });
+                        res.send({ status: true, message: "Mapper Created" });
                       })
                       .catch((err) =>
-                        res.send({ message: "Mapper not created", err })
+                        res.send({ status: false, message: "Mapper not created", err })
                       );
                   }                 
                   else {
