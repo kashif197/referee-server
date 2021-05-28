@@ -34,6 +34,14 @@ const OfferCustomerMapSchema = new Schema({
         type: Number,
         required: true,
         default: 0
+    },
+    offer_headline: {
+        type: String,
+        default: '',
+    },
+    offer_description: {
+        type: String,
+        default: '',
     }
 })
 

@@ -78,12 +78,16 @@ router.post("/availOffer", verifyToken, async (req, res) => {
                     o_id = offData.id;
                     o_cn = offData.campaign_name;
                     targetTrans = offData.target_transaction;
+                    o_headline = offData.headline;
+                    o_description = offData.description;
                     const newOffCust = new OfferCustomerMap({
                       business_id: b_id,
                       customer_id: c_id,
                       offer_id: o_id,
                       offer_campName: o_cn,
                       targetTransaction: targetTrans,
+                      offer_headline: o_headline,
+                      offer_description: o_description,
                       count: 0,
                     });
                     newOffCust
@@ -103,6 +107,8 @@ router.post("/availOffer", verifyToken, async (req, res) => {
                     c_id = custData.id;
                     o_id = offData.id;
                     o_cn = offData.campaign_name;
+                    o_headline = offData.headline;
+                    o_description = offData.description;
                     targetTrans = offData.target_transaction;
                     const newOffCust = new OfferCustomerMap({
                       business_id: b_id,
@@ -110,6 +116,8 @@ router.post("/availOffer", verifyToken, async (req, res) => {
                       offer_id: o_id,
                       offer_campName: o_cn,
                       targetTransaction: targetTrans,
+                      offer_headline: o_headline,
+                      offer_description: o_description,
                       count: 0,
                     });
                     newOffCust
@@ -138,6 +146,7 @@ router.post("/availOffer", verifyToken, async (req, res) => {
 
 router.get('/getAvailedOffers/:id', async (req, res) => {
   const customer = await OfferCustomerMap.find({customer_id: req.params.id});
+  // const offer = await Offer.findOne({})
   res.send({status: true, data: customer, message: "All availed offers of the customer."})
   // .then(offer => offer.remove().then(() => res.json({ success: true })))
   // .catch(err => res.status(404).json({ err }))
