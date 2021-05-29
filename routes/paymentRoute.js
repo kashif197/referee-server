@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Payment = require("../models/PaymentGateway");
+const Business = require("../models/Business");
 const Stripe = require("stripe");
 const stripe = Stripe(
   "sk_test_51IvpLtGWAyqjCK11qRriLG8p6iCrfIyhBnPCjFYe89b9Fz52bpxl9jcj4Ub2EovehgbsYcg0wzM0OEFIYOKmQGKZ00Aibcbpa0"
@@ -41,6 +42,7 @@ router.post("/stripeTransaction", async (req, res) => {
     amount: receipt.amount / 100,
     currency: receipt.currency,
     receipt_email: receipt.receipt_email,
+    business_username: req.body.business_username,
     description: receipt.description,
     paid: receipt.paid,
     receipt_url: receipt.receipt_url,
@@ -48,16 +50,28 @@ router.post("/stripeTransaction", async (req, res) => {
   });
   transactionRecord
     .save()
-    .then((result) => {
-      res.send({
-        status: true,
-        message: "transaction record created",
-        data: result,
-      });
-    })
-    .catch((err) => {
-      res.send({ status: false, message: "transaction record not created." });
-    });
+    if(transactionRecord){
+      const business = await Business.findOne({username: transactionRecord.business_username});
+      business.balance += transactionRecord.amount;  
+      Business.updateOne({username: transactionRecord.business_username},
+        {
+          $set: {
+            balance: business.balance,
+          },
+        }
+      ).then(data=>{res.send({   status: true,
+      message: "transaction record created",
+      data: transactionRecord,})})
+    //   console.log(business)
+    //   res.send({
+    //     status: true,
+    //     message: "transaction record created",
+    //     data: transactionRecord,
+    //   });
+      }
+    else{
+      res.send({ status: false, message: "transaction record not created." });}
+    
 });
 
 // Retrieves all previous receipts

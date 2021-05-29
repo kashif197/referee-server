@@ -34,8 +34,8 @@ const BusinessSchema = new Schema({
         default: ""
     },
     balance: {
-        type: String,
-        default: ''
+        type: Number,
+        default: 0
     },
     resetToken:String,
     expireToken:Date,

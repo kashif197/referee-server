@@ -6,7 +6,8 @@ const PaymentSchema = new Schema({
         type: String
     },
     business_username: {
-        type: String
+        type: String,
+        default: ''
     },
     receipt_email: {
         type: String
@@ -15,7 +16,7 @@ const PaymentSchema = new Schema({
         type: String
     },
     amount: {
-        type: String,
+        type: Number,
         required: true,
     },
     currency: {
