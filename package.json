@@ -24,7 +24,8 @@
     "nodemailer-sendgrid-transport": "^0.2.0",
     "passport": "^0.4.1",
     "passport-google-oauth20": "^2.0.0",
-    "qrcode": "^1.4.4"
+    "qrcode": "^1.4.4",
+    "stripe": "^8.150.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.6"

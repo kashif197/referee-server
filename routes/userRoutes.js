@@ -50,7 +50,7 @@ const generateQR = async (text, filename) => {
     await QRCode.toString(text, { type: "utf8" });
     await QRCode.toFile("images/" + filename + ".png", text, { width: 500 });
   } catch (err) {
-    console.error(err);
+    console.error("QR not generated", err);
   }
 };
 
@@ -369,8 +369,9 @@ router.post("/transaction", async (req, res) => {
   const business = await Business.findOne({username: req.body.username});
   // console.log("customer: ", customer);
   // console.log("business: ", business);
-  const customer_map = await OfferCustomerMap.findOne({customer_id: customer.id, business_id: business._id})
+  const customer_map = await OfferCustomerMap.findOne({customer_id: customer._id, business_id: business._id})
   // console.log(customer_map);
+  if (customer_map){
   customer_map.count += 1;
   OfferCustomerMap.updateOne(
     {customer_id: customer.id, business_id: business._id},
@@ -382,26 +383,11 @@ router.post("/transaction", async (req, res) => {
     .then((result)=>{
       res.send({message:"Transaction successful.", status: true, data:result.count})
     })
-    .catch(err=>{res.send(err)})
+    .catch(err=>{res.send({message: "Customer or Business is incorrect."})})}
+    else{
+      res.send({message: "Customer or Business is incorrect."})
+    }
   
 })
-
-
-
-
-///// FOR GENERATING QR IMAGE
-// QRCode.toDataURL(text)
-// .then((url)=>{
-//   setImageUrl(url);
-// })
-
-//   QRCode.toDataURL("I am a pony!")
-//   .then((url) => {
-//     console.log(url);
-//   })
-//   .catch((err) => {
-//     console.error(err);
-//   });
-// });
 
 module.exports = router;
