@@ -159,6 +159,26 @@ router.get('/getAvailedOffers/:id', async (req, res) => {
 })
 
 
+router.post('/redeemOffer/:id/:id2', async (req, res) => { //redeemed, 
+  const check = await OfferCustomerMap.findOne({customer_id: req.params.id, offer_id: req.params.id2});
+  if(!check.redeemed){
+    check.redeemed = true;
+    OfferCustomerMap.updateOne(
+      { _id: check.id },
+      {
+        $set: {
+          redeemed: check.redeemed
+        },
+      },
+      (data)=>{
+        res.send({status: true, message: "Offer Redeemed."})
+      })
+  }else{
+    res.send({status: false, message: "Offer already Redeemed."})
+  }
+})
+
+
 function verifyToken(req, res, next) {
   const bearerHeader = req.headers["authorization"];
   if (typeof bearerHeader !== "undefined") {

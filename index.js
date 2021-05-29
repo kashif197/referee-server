@@ -12,6 +12,7 @@ const admin = require('./routes/adminRoutes')
 const offcust = require('./routes/offerCustomerRoutes')
 const watsonRoutes = require('./routes/watson')
 const payment = require('./routes/paymentRoute')
+const analytics = require('./routes/analyticsRoute')
 
 const app = express()
 
@@ -37,6 +38,7 @@ app.use('/offcust', offcust)
 app.use('/watson', watsonRoutes);
 app.use('/images', express.static('images')); 
 app.use('/payment', payment);
+app.use('/analytics', analytics);
 
 const PORT = process.env.PORT || 5000
 

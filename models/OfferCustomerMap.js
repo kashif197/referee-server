@@ -42,6 +42,10 @@ const OfferCustomerMapSchema = new Schema({
     offer_description: {
         type: String,
         default: '',
+    },
+    redeemed: {
+        type: Boolean,
+        default: false
     }
 })
 
