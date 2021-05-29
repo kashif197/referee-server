@@ -39,6 +39,32 @@ router.get('/getTotalRedeemedOffers/:id', async (req, res)=>{
     res.send({status: true, message: "Total availed offers of the business", data:times})
 })
 
+// Get Total Offers Purchased
+router.get('/getTotalOffersPurchased/:id', async (req, res)=>{
+    const mappers = await OfferCustomerMap.find({business_id:req.params.id});
+    const len = Object.keys(mappers).length;
+    var count=0;
+    for (var i=0; i<len; i++){
+        count+=mappers[i].count;
+    }
+    res.send({status: true, message: "Total offers purchased of the business", data:count})
+})
+
+// Get Best Offer
+router.get('/getBestOffer/:id', async (req, res)=>{
+    const mappers = await OfferCustomerMap.find({business_id:req.params.id});
+    const len = Object.keys(mappers).length;
+    var count=0;
+    let obj = {}
+    for (var i=0; i<len; i++){
+        if(mappers[i].count>count){
+            count = mappers[i].count;
+            obj = mappers[i]
+        }
+        
+    }
+    res.send({status: true, message: "Best Offer of the business", data:{count, obj}})
+})
 
 
 module.exports = router;
