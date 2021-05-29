@@ -7,7 +7,7 @@ const stripe = Stripe(
   "sk_test_51IvpLtGWAyqjCK11qRriLG8p6iCrfIyhBnPCjFYe89b9Fz52bpxl9jcj4Ub2EovehgbsYcg0wzM0OEFIYOKmQGKZ00Aibcbpa0"
 );
 
-router.get("/getTransactionRecords", async (req, res) => {
+router.post("/getTransactionRecords", async (req, res) => {
   const records = await Payment.find({ receipt_email: req.body.receipt_email });
   res.send({ status: true, data: records });
 });
