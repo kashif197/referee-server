@@ -26,14 +26,12 @@ const OfferCustomerMap = require("../models/OfferCustomerMap");
 router.get(
   "/google",
   passport.authenticate("google", {
-    scope: ["profile"],
+    scope: ["profile", 'email'],
   })
 );
 
 //Callback Route For Google
-router.get("/google/redirect", (req, res) => {
-  console.log("here");
-});
+router.get("/google/redirect", passport.authenticate('google', {successRedirect: "http://localhost:3000"}));
 
 // Nodemailer Transporter
 const transporter = nodemailer.createTransport(
