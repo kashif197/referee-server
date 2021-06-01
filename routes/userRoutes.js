@@ -134,6 +134,7 @@ router.post("/login", (req, res) => {
                       contact: userInfo.contact,
                       designation: userInfo.designation,
                       token,
+                      referral_code: userInfo.referral_code
                     });
                   }
                 );
